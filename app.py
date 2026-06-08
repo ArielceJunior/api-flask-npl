@@ -30,10 +30,7 @@ def home():
 
 @app.route("/api", methods=["POST"])
 def results():
-    auth_key = request.headers.get("Authorization")
-    if auth_key != chave_secreta:
-        return jsonify({"error": "Não autorizado"}), 401
-
+    
     data = request.get_json(force=True)
 
     if not data or "consulta" not in data:
