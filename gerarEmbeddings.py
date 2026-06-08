@@ -12,9 +12,10 @@ if not chave_secreta:
 
 generativeai.configure(api_key=chave_secreta)
 
-csv_url = 'https://docs.google.com/spreadsheets/d/11QU1ibjUAlNKLwLWF1s-kSpRH2UBOiVbLyl1pJIyeSk/export?format=csv&id=11QU1ibjUAlNKLwLWF1s-kSpRH2UBOiVbLyl1pJIyeSk'
+csv_url = 'https://docs.google.com/spreadsheets/d/1YHbgsm-H_CCJLxfy4Y_bI0gZbORSY8F4uw0MZJmG9QM/export?format=csv&id=1YHbgsm-H_CCJLxfy4Y_bI0gZbORSY8F4uw0MZJmG9QM'
 df = pd.read_csv(csv_url)
-print(df.head())
+print(f"Planilha carregada com {len(df)} registros.")
+print(df[['Titulo']].to_string())
 
 model = 'models/gemini-embedding-001'
 def gerarEmbeddings(title, text):

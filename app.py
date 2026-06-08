@@ -10,34 +10,45 @@ import os
 from geminiFunctions import gerarBuscarConsulta, melhorarResposta
 
 load_dotenv()
+
 app = Flask(__name__)
-CORS(app)  # Initialize CORS for the entire application
-modelo = 'gemini-3-flash-preview'
-modeloEmbeddings = pickle.load(open('datasetEmbeddings.pkl','rb'))
+CORS(app)
+
+modeloEmbeddings = pickle.load(open('datasetEmbeddings.pkl', 'rb'))
+
 chave_secreta = os.getenv('GEMINI_API_KEY')
 generativeai.configure(api_key=chave_secreta)
 
-
 @app.route("/")
 def home():
-    consulta = "Quem é você ?"
-    resposta = gerarBuscarConsulta(consulta, modeloEmbeddings)
-    prompt = f"Consulta: {consulta} Resposta: {resposta}"
-    response = melhorarResposta(prompt)
-    return response
-
+    return jsonify({
+        "status": "online",
+        "chatbot": "MazeBot",
+        "descricao": "Assistente educacional de algoritmos de busca e IA aplicados a labirintos",
+        "uso": "Envie um POST para /api com JSON: { 'consulta': 'sua pergunta aqui' }"
+    })
 
 @app.route("/api", methods=["POST"])
 def results():
-    # Verifique a chave de autorização
     auth_key = request.headers.get("Authorization")
     if auth_key != chave_secreta:
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"error": "Não autorizado"}), 401
+
     data = request.get_json(force=True)
+
+    if not data or "consulta" not in data:
+        return jsonify({"error": "Campo 'consulta' é obrigatório no corpo da requisição"}), 400
+
     consulta = data["consulta"]
+
+    if not consulta.strip():
+        return jsonify({"error": "A consulta não pode ser vazia"}), 400
+
     resultado = gerarBuscarConsulta(consulta, modeloEmbeddings)
-    prompt = f"Consulta: {consulta} Resposta: {resultado}"
+    prompt = f"Consulta: {consulta}\nResposta: {resultado}"
     response = melhorarResposta(prompt)
-    return jsonify({"mensagem":  response})
 
+    return jsonify({"mensagem": response})
 
+if __name__ == "__main__":
+    app.run(debug=True)
