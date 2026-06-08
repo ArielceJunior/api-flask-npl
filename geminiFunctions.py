@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 model_embeddings = 'models/gemini-embedding-001'
-model_geracao = 'gemini-2.0-flash'
+model_geracao = 'gemini-3-flash-preview'
 
 def gerarBuscarConsulta(consulta, dataset):
     embedding_consulta = generativeai.embed_content(
